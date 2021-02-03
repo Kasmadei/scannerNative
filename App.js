@@ -6,7 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   Image,
-  Button
+  Button,
 } from 'react-native';
 
 import {RNCamera} from 'react-native-camera';
@@ -26,38 +26,57 @@ const Background = () => {
 };
 
 const App = () => {
-  const [isScanning, setIsScanning] = useState(false)
-  const [scanned, setScanned] = useState(false)
+  const [isScanning, setIsScanning] = useState(false);
+  const [numberOfDetected, setNumberOfDetected] = useState(0);
 
   const onBarCodeRead = (e) => {
-    setIsScanning(false)
-    setScanned(true)
-    Alert.alert('Barcode value is' + e.data, 'Barcode type is' + e.type);
-  }
+    // setIsScanning(false)
+    // setScanned(true)
+
+    // Alert.alert('Barcode value is' + e.data, 'Barcode type is' + e.type);
+    setNumberOfDetected((numberOfDetected) => numberOfDetected + 1);
+  };
 
   return (
     <View style={styles.container}>
-    <RNCamera
-      style={styles.preview}
-      onBarCodeRead={isScanning ? onBarCodeRead : undefined}
-      ref={(cam) => (this.camera = cam)}
-      rectOfInterest={{ x: 0.25, y: 0.25, width: 0.4, height: 0.4, }}
-      >
-      <Background />
-    </RNCamera>
-    
-    <View style={styles.bottomOverlay}>
-      {!isScanning && <Button title='start scanning' onPress={() => { setIsScanning(true) }} />}
-      {isScanning && <Text style={{ color: 'white', fontSize: 20 }}>Scanning...</Text>}
-      {isScanning && <Button title='stop scanning' onPress={() => { setIsScanning(false) }} />}
+      <RNCamera
+        style={styles.preview}
+        onBarCodeRead={onBarCodeRead}
+        ref={(cam) => (this.camera = cam)}
+        rectOfInterest={{x: 0.25, y: 0.25, width: 0.4, height: 0.4}}>
+        {/* this back is not correct */}
+        {/* <Background /> */}
+      </RNCamera>
+
+      <View style={styles.bottomOverlay}>
+        {!isScanning && (
+          <Button
+            title="start infinite scanning"
+            onPress={() => {
+              setIsScanning(true);
+            }}
+          />
+        )}
+        {isScanning && (
+          <Text style={{color: 'white', fontSize: 20}}>Scanning...</Text>
+        )}
+        {/* {isScanning && <Button title='stop scanning' onPress={() => { setIsScanning(false) }} />} */}
+        {isScanning && (
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 16,
+              textAlign: 'center',
+            }}>{`Number of detected QR's: ${numberOfDetected}`}</Text>
+        )}
+      </View>
     </View>
-  </View>
-  )
-}
+  );
+};
 
-export default App
+export default App;
 
-const opacity = "rgba(0, 0, 0, .4)";
+const opacity = 'rgba(0, 0, 0, .4)';
 
 const styles = StyleSheet.create({
   container: {
@@ -83,7 +102,7 @@ const styles = StyleSheet.create({
   },
   layerCenter: {
     flex: 1.2,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   layerLeft: {
     flex: 0.8,
